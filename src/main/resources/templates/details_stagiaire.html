@@ -1,0 +1,104 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"lang="fr">
+<head>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1A2B6B">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fiche stagiaire</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-light bg-white shadow-sm px-4">
+        <span class="navbar-brand" style="font-weight: 500;">
+            <img src="/logo_ecobank.png" alt="Ecobank" style="height: 40px; margin-right: 10px;"> Gestion des stagiaires
+        </span>
+    <a href="/" class="btn btn-primary btn-sm" style="background-color: #2563EB; border: none;">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
+</nav>
+
+<div class="container mt-4">
+    <h4 class="text-center mb-4">
+        <span style="border: none; padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">FICHE STAGIAIRE</span>
+    </h4>
+
+    <h5>Informations personnelles</h5>
+    <p>Nom : <span th:text="${stagiaire.nom}"></span></p>
+    <p>Prenom : <span th:text="${stagiaire.prenom}"></span></p>
+    <p>Telephone : <span th:text="${stagiaire.telephone}"></span></p>
+    <p>Email : <span th:text="${stagiaire.email}"></span></p>
+    <p>Ecole d'origine : <span th:text="${stagiaire.ecoleOrigine}"></span></p>
+    <hr>
+
+    <h5>Informations sur le stage</h5>
+    <p>Période : Du <span th:text="${stagiaire.dateDebut}"></span> au <span th:text="${stagiaire.dateFin}"></span></p>
+    <p>Type de stage : <span th:text="${stagiaire.typeStage}"></span></p>
+    <p>Service/Division : <span th:text="${stagiaire.serviceDivision}"></span></p>
+    <p>Taches données : <span th:text="${stagiaire.tachesDonnees}"></span></p>
+    <p>Tâches réalisées : <span th:text="${stagiaire.nbTachesRealisees}"></span> / <span th:text="${stagiaire.nbTotalTaches}"></span></p>
+    <p>Avancement :
+        <span th:if="${stagiaire.nbTotalTaches > 0}"
+              th:text="${stagiaire.nbTachesRealisees * 100 / stagiaire.nbTotalTaches} + '%'">
+    </span>
+        <span th:if="${stagiaire.nbTotalTaches == 0}">Aucune tâche définie</span>
+    </p>
+    <hr>
+
+    <h5>Note de fin de stage</h5>
+    <p>Note : <span th:text="${stagiaire.note}"></span> / 20</p>
+    <hr>
+
+    <h5>Suivi du rapport de stage</h5>
+    <p>Rapport rédigé :
+        <span th:if="${stagiaire.memoireRedige}" class="badge bg-success">Oui</span>
+        <span th:unless="${stagiaire.memoireRedige}" class="badge bg-danger">Non</span>
+    </p>
+    <p>Présenté au chef de service :
+        <span th:if="${stagiaire.presenteChefService}" class="badge bg-success">Oui</span>
+        <span th:unless="${stagiaire.presenteChefService}" class="badge bg-danger">Non</span>
+    </p>
+    <p>Présenté au DRH :
+        <span th:if="${stagiaire.presenteDRH}" class="badge bg-success">Oui</span>
+        <span th:unless="${stagiaire.presenteDRH}" class="badge bg-danger">Non</span>
+    </p>
+
+    <div th:if="${session.utilisateur.role == 'Administrateur'}" class="mt-4">
+        <a th:href="@{'/modifier/' + ${stagiaire.id}}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Modifier
+        </a>
+        <a th:href="@{'/supprimer/' + ${stagiaire.id}}" class="btn btn-danger"
+           onclick="return confirm('Supprimer ce stagiaire ?')">
+            <i class="bi bi-trash"></i> Supprimer
+        </a>
+    </div>
+    <a th:if="${(session.utilisateur.role == 'DRH' || session.utilisateur.role == 'Administrateur') && !stagiaire.presenteDRH}"
+       th:href="@{'/valider-drh/' + ${stagiaire.id}}"
+       class="btn btn-success btn-sm mt-2"
+       onclick="return confirm('Confirmer que le rapport vous a été présenté ?')">
+        <i class="bi bi-check-circle"></i> Valider la présentation au DRH
+    </a>
+    <a th:if="${(session.utilisateur.role == 'DRH' || session.utilisateur.role == 'Administrateur') && stagiaire.presenteDRH}"
+       th:href="@{'/valider-drh/' + ${stagiaire.id}}"
+       class="btn btn-danger btn-sm mt-2"
+       onclick="return confirm('Annuler la validation ?')">
+        <i class="bi bi-x-circle"></i> Annuler la présentation au DRH
+    </a>
+
+    <a th:if="${(session.utilisateur.role == 'chef_de_service' || session.utilisateur.role == 'Administrateur') && !stagiaire.presenteChefService}"
+       th:href="@{'/valider-chef/' + ${stagiaire.id}}"
+       class="btn btn-success btn-sm mt-2"
+       onclick="return confirm('Confirmer que le rapport vous a été présenté ?')">
+        <i class="bi bi-check-circle"></i> Valider la présentation au Chef
+    </a>
+    <a th:if="${(session.utilisateur.role == 'chef_de_service' || session.utilisateur.role == 'Administrateur') && stagiaire.presenteChefService}"
+       th:href="@{'/valider-chef/' + ${stagiaire.id}}"
+       class="btn btn-danger btn-sm mt-2"
+       onclick="return confirm('Annuler la validation ?')">
+        <i class="bi bi-x-circle"></i> Annuler la présentation au Chef
+    </a>
+
+</div>
+</body>
+</html>

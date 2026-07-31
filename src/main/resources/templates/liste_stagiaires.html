@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1A2B6B">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des stagiaires</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body style="background-color: #f5f6fa;">
+<nav class="navbar navbar-light bg-white shadow-sm px-4">
+    <span class="navbar-brand" style="font-weight: 500;">
+        <img src="/logo_ecobank.png" alt="Ecobank" style="height: 40px; margin-right: 10px;"> Gestion des stagiaires
+    </span>
+    <div>
+        <a href="/tableau_de_bord" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-speedometer2"></i> Tableau de bord
+        </a>
+        <a th:if="${session.utilisateur.role == 'Administrateur'}" href="/ajouter" class="btn btn-primary btn-sm" style="background-color: #2563EB; border: none;">
+            <i class="bi bi-plus"></i> Nouveau stagiaire
+        </a>
+        <a href="/deconnexion" class="btn btn-outline-secondary btn-sm ms-2">
+            <i class="bi bi-box-arrow-right"></i> Déconnexion
+        </a>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h4 class="text-center mb-4">
+        <span style="border: none; padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">LISTE DES STAGIAIRES</span>
+    </h4>
+    <div class="card border-0 shadow-sm p-3 mb-3">
+        <form method="GET" action="/rechercher">
+            <div class="row g-2">
+                <div class="col">
+                    <input type="text" name="nom" class="form-control form-control-sm" placeholder="Rechercher par nom...">
+                </div>
+                <div class="col">
+                    <select name="typeStage" class="form-select form-select-sm">
+                        <option value="">Tous les types</option>
+                        <option value="Stage d'observation">Stage d'observation</option>
+                        <option value="Stage de perfectionnement">Stage de perfectionnement</option>
+                        <option value="Stage école">Stage école</option>
+                        <option value="Stage de fin d'études">Stage de fin d'études</option>
+                        <option value="Stage pré-emploi">Stage pré-emploi</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <select name="serviceDivision" class="form-select form-select-sm">
+                        <option value="">Tous les services</option>
+                        <option value="Direction Informatique">Direction Informatique</option>
+                        <option value="Direction des Ressources Humaines">Direction des Ressources Humaines</option>
+                        <option value="Service Clientèle">Service Clientèle</option>
+                        <option value="Audit Interne">Audit Interne</option>
+                        <option value="Direction Financière">Direction Financière</option>
+                        <option value="Direction Commerciale">Direction Commerciale</option>
+                        <option value="Service Juridique">Service Juridique</option>
+                        <option value="Direction des Opérations">Direction des Opérations</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row g-2 mt-1">
+                <div class="col">
+                    <input type="date" name="dateDebut" class="form-control form-control-sm">
+                </div>
+                <div class="col">
+                    <input type="date" name="dateFin" class="form-control form-control-sm">
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary btn-sm w-100" style="background-color: #2563EB; border: none;">
+                        <i class="bi bi-search"></i> Rechercher
+                    </button>
+                </div>
+                <div class="col">
+                    <a href="/" class="btn btn-outline-secondary btn-sm w-100">
+                        <i class="bi bi-x-circle"></i> Réinitialiser
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="card mt-3 border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead style="background-color: #1A2B6B; color: white;">
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>École</th>
+                    <th>Type de stage</th>
+                    <th>Service</th>
+                    <th>Début</th>
+                    <th>Fin</th>
+                    <th>Mémoire</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${stagiaires}">
+                    <td th:text="${s.nom}"></td>
+                    <td th:text="${s.prenom}"></td>
+                    <td th:text="${s.ecoleOrigine}"></td>
+                    <td th:text="${s.typeStage}"></td>
+                    <td th:text="${s.serviceDivision}"></td>
+                    <td th:text="${s.dateDebut}"></td>
+                    <td th:text="${s.dateFin}"></td>
+                    <td>
+                        <span th:if="${s.memoireRedige}" class="badge bg-success">Oui</span>
+                        <span th:unless="${s.memoireRedige}" class="badge bg-danger">Non</span>
+                    </td>
+
+                    <td>
+                        <a th:href="@{'/details/' + ${s.id}}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
+                        <a th:if="${session.utilisateur.role == 'Administrateur'}" th:href="@{'/modifier/' + ${s.id}}" class="btn btn-sm btn-outline-warning"><i class="bi bi-pencil"></i></a>
+                        <a th:if="${session.utilisateur.role == 'Administrateur'}" th:href="@{'/supprimer/' + ${s.id}}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer ce stagiaire ?')"><i class="bi bi-trash"></i></a>
+                    </td>
+
+                </tr>
+                <tr th:if="${#lists.isEmpty(stagiaires)}">
+                    <td colspan="9" class="text-center text-muted py-4">Aucun stagiaire enregistré</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

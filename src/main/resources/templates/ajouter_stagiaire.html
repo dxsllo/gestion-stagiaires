@@ -1,0 +1,139 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"lang="fr">
+<head>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1A2B6B">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ajouter stagiaires</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-light bg-white shadow-sm px-4">
+        <span class="navbar-brand" style="font-weight: 500;">
+            <img src="/logo_ecobank.png" alt="Ecobank" style="height: 40px; margin-right: 10px;"> Gestion des stagiaires
+        </span>
+    <a href="/" class="btn btn-primary btn-sm" style="background-color: #2563EB; border: none;">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
+</nav>
+
+<div class="container mt-4">
+    <h4 class="text-center mb-4">
+        <span style="border: none; padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">AJOUTER UN STAGIAIRE</span>
+    </h4>
+    <div th:if="${erreur}" class="alert alert-danger" role="alert">
+        <i class="bi bi-exclamation-circle"></i> <span th:text="${erreur}"></span>
+    </div>
+    <form method="POST" action="/enregistrer" th:object="${stagiaire}">
+        <div class="row mb-3">
+            <h5>Informations personnelles du stagiaire</h5>
+            <div class="col">
+                <label class="form-label">Nom</label>
+                <input type="text" class="form-control" th:field="*{nom}" required>
+            </div>
+            <div class="col">
+                <label class="form-label">Prénom</label>
+                <input type="text" class="form-control" th:field="*{prenom}" required>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <label class="form-label">Téléphone</label>
+                <input type="text" class="form-control" th:field="*{telephone}" required>
+            </div>
+            <div class="col">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" th:field="*{email}" required>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">École d'origine</label>
+            <input type="text" class="form-control" th:field="*{ecoleOrigine}">
+        </div>
+        <hr>
+
+        <h5>Informations sur le stage</h5>
+        <div class="row mb-3">
+            <div class="col">
+                <label class="form-label">Date de début</label>
+                <input type="date" class="form-control" th:field="*{dateDebut}" required>
+            </div>
+            <div class="col">
+                <label class="form-label">Date de fin</label>
+                <input type="date" class="form-control" th:field="*{dateFin}" required>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <label class="form-label">Service/Division</label>
+                <select class="form-select" th:field="*{serviceDivision}" required>
+                    <option value=""display hidden>Choisir un service</option>
+                    <option value="Direction Informatique">Direction Informatique</option>
+                    <option value="Direction des Ressources Humaines">Direction des Ressources Humaines</option>
+                    <option value="Service Clientèle">Service Clientèle</option>
+                    <option value="Audit Interne">Audit Interne</option>
+                    <option value="Direction Financière">Direction Financière</option>
+                    <option value="Direction Commerciale">Direction Commerciale</option>
+                    <option value="Service Juridique">Service Juridique</option>
+                    <option value="Direction des Opérations">Direction des Opérations</option>
+                </select>
+            </div>
+            <div class="col">
+                <label class="form-label">Type de stage</label>
+                <select class="form-select" th:field="*{typeStage}" required>
+                    <option value=""display hidden>Choisir un type</option>
+                    <option value="Stage d'observation">Stage d'observation</option>
+                    <option value="Stage de perfectionnement">Stage de perfectionnement</option>
+                    <option value="Stage école">Stage école</option>
+                    <option value="Stage de fin d'études">Stage de fin d'études</option>
+                    <option value="Stage pré-emploi">Stage pré-emploi</option>
+                    <option value="Autre">Autre</option>
+                </select>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Taches à excécuter</label>
+            <textarea class="form-control" th:field="*{tachesDonnees}" rows="4"
+                      placeholder="Décrivez les taches à excécuter par le stagiaire..."></textarea>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <label class="form-label">Nombre total de taches</label>
+                <input type="number" class="form-control" th:field="*{nbTotalTaches}" min="0">
+            </div>
+            <div class="col">
+                <label class="form-label">Nombre de taches réalisées</label>
+                <input type="number" class="form-control" th:field="*{nbTachesRealisees}" min="0">
+            </div>
+        </div>
+        <hr>
+
+        <div class="mb-3">
+            <label class="form-label">Note</label>
+            <input type="number" class="form-control" th:field="*{note}" min="0" max="20" step="0.5">
+        </div>
+        <hr>
+
+        <h5>Suivi du rapport de stage</h5>
+        <div class="form-check mb-2">
+            <input type="checkbox" class="form-check-input" th:field="*{memoireRedige}">
+            <label class="form-check-label">Rapport de stage rédigé</label>
+        </div>
+        <div class="form-check mb-2">
+            <input type="checkbox" class="form-check-input" th:field="*{presenteDRH}">
+            <label class="form-check-label">Est-il présenté au DRH?</label>
+        </div>
+        <div class="form-check mb-2">
+            <input type="checkbox" class="form-check-input" th:field="*{presenteChefService}">
+            <label class="form-check-label">Est-il présenté au chef de service?</label>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mt-3" style="background-color: #2563EB; border: none;">
+            Enregistrer le stagiaire
+        </button>
+    </form>
+
+</div>
+</body>
+</html>
