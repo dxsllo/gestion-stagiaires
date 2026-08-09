@@ -16,6 +16,8 @@ public class Utilisateur{
     private String role;
     private String email;
     private String telephone;
+    private String otp;
+    private long otpExpiration;
 
     public Long getId() {
         return id;
@@ -64,5 +66,21 @@ public class Utilisateur{
     }
     public void setTelephone(String telephone) {
         this.telephone = telephone;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
+    public long getOtpExpiration() {
+        return otpExpiration;
+    }
+
+    public void setOtpExpiration(long otpExpiration) {
+        this.otpExpiration = otpExpiration;
     }
 }

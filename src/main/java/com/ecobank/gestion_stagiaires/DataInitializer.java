@@ -18,7 +18,7 @@ public class DataInitializer implements CommandLineRunner {
             admin.setIdentifiant("admin");
             admin.setMotDePasse("12345");
             admin.setRole("Administrateur");
-            admin.setEmail("admin@ecobank.ci");
+            admin.setEmail("orlikebr@gmail.com");
             admin.setTelephone("0749980642");
             UtilisateurRepository.save(admin);
             System.out.println("Compte admin créé avec succès !");
@@ -28,7 +28,7 @@ public class DataInitializer implements CommandLineRunner {
             drh.setIdentifiant("drh");
             drh.setMotDePasse("drh12345");
             drh.setRole("DRH");
-            drh.setEmail("drh@ecobank.ci");
+            drh.setEmail("orlikebr@gmail.com");
             drh.setTelephone("0749980642");
             UtilisateurRepository.save(drh);
 
@@ -37,7 +37,7 @@ public class DataInitializer implements CommandLineRunner {
             chef.setIdentifiant("Chief");
             chef.setMotDePasse("chief123");
             chef.setRole("chef_de_service");
-            chef.setEmail("chef@ecobank.ci");
+            chef.setEmail("orlikebr@gmail.com");
             chef.setTelephone("0749980642");
             UtilisateurRepository.save(chef);
         }

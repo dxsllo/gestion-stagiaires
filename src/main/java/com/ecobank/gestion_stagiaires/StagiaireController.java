@@ -51,8 +51,16 @@ public class StagiaireController {
             return "redirect:/";
         }
         Stagiaire existant = stagiaireRepository.findByEmail(stagiaire.getEmail());
-        if (existant != null && !existant.getId().equals(stagiaire.getId())) {
+        if (existant != null && (stagiaire.getId() == null || !existant.getId().equals(stagiaire.getId()))) {
             model.addAttribute("erreur", "Cet email est déjà utilisé par un autre stagiaire");
+            model.addAttribute("stagiaire", stagiaire);
+            return "ajouter_stagiaire";
+        }
+        // Vérifier le doublon nom + prénom + école
+        Stagiaire doublon = stagiaireRepository.findByNomAndPrenomAndEcoleOrigine(
+                stagiaire.getNom(), stagiaire.getPrenom(), stagiaire.getEcoleOrigine());
+        if (doublon != null && (stagiaire.getId() == null || !doublon.getId().equals(stagiaire.getId()))) {
+            model.addAttribute("erreur", "Un stagiaire avec le même nom, prénom et école existe déjà");
             model.addAttribute("stagiaire", stagiaire);
             return "ajouter_stagiaire";
         }
@@ -78,7 +86,13 @@ public class StagiaireController {
             model.addAttribute("stagiaire", stagiaire);
             return "ajouter_stagiaire";
         }
-        stagiaireRepository.save(stagiaire);
+        try {
+            stagiaireRepository.save(stagiaire);
+        } catch (Exception e) {
+            model.addAttribute("erreur", "Cet email est déjà utilisé par un autre stagiaire");
+            model.addAttribute("stagiaire", stagiaire);
+            return "ajouter_stagiaire";
+        }
         return "redirect:/";
     }
 
@@ -190,6 +204,8 @@ public class StagiaireController {
     @GetMapping("/rechercher")
     public String rechercher(
             @RequestParam(required = false) String nom,
+            @RequestParam(required = false) String prenom,
+            @RequestParam(required = false) String ecoleOrigine,
             @RequestParam(required = false) String typeStage,
             @RequestParam(required = false) String serviceDivision,
             @RequestParam(required = false) String dateDebut,
@@ -204,6 +220,10 @@ public class StagiaireController {
 
         if (nom != null && !nom.isEmpty()) {
             resultats = stagiaireRepository.findByNomContainingIgnoreCase(nom);
+        } else if (prenom != null && !prenom.isEmpty()) {
+            resultats = stagiaireRepository.findByPrenomContainingIgnoreCase(prenom);
+        } else if (ecoleOrigine != null && !ecoleOrigine.isEmpty()) {
+            resultats = stagiaireRepository.findByEcoleOrigineContainingIgnoreCase(ecoleOrigine);
         } else if (typeStage != null && !typeStage.isEmpty()) {
             resultats = stagiaireRepository.findByTypeStage(typeStage);
         } else if (serviceDivision != null && !serviceDivision.isEmpty()) {

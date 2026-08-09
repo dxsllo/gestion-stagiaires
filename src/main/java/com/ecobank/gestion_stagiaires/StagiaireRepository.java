@@ -14,4 +14,5 @@ public interface StagiaireRepository extends JpaRepository<Stagiaire, Long> {
     List<Stagiaire> findByDateDebutGreaterThanEqual(String dateDebut);
     List<Stagiaire> findByDateFinLessThanEqual(String dateFin);
     List<Stagiaire> findByDateDebutGreaterThanEqualAndDateFinLessThanEqual(String dateDebut, String dateFin);
+    Stagiaire findByNomAndPrenomAndEcoleOrigine(String nom, String prenom, String ecoleOrigine);
 }
