@@ -1,5 +1,6 @@
 package com.ecobank.gestion_stagiaires;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,7 +10,8 @@ import java.net.http.HttpResponse;
 @Service
 public class EmailService {
 
-    private final String API_KEY = "re_8Nn8iMrB_48tXz7Rec33UkZwe1jXMnqg6";
+    @Value("${resend.api.key}")
+    private String API_KEY;
 
     public void envoyerOtp(String destinataire, String otp) {
         try {
