@@ -38,6 +38,14 @@
                 <input type="text" class="form-control" th:field="*{prenom}" required>
             </div>
         </div>
+        <div class="mb-3">
+            <label class="form-label">Sexe</label>
+            <select class="form-select" th:field="*{sexe}" required>
+                <option value="" display hidden>Choisir le sexe</option>
+                <option value="Masculin">Masculin</option>
+                <option value="Féminin">Féminin</option>
+            </select>
+        </div>
         <div class="row mb-3">
             <div class="col">
                 <label class="form-label">Téléphone</label>
@@ -99,6 +107,10 @@
                     <option value="Autre">Autre</option>
                 </select>
             </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Thème du stage</label>
+            <input type="text" class="form-control" th:field="*{themeStage}" placeholder="Ecrivez le thème lié au stage" required>
         </div>
         <div class="mb-3">
             <label class="form-label">Taches à excécuter</label>

@@ -38,59 +38,125 @@
     </h4>
     <div class="card border-0 shadow-sm p-3 mb-3">
         <form method="GET" action="/rechercher">
-            <div class="row g-2">
-                <div class="col">
-                    <input type="text" name="nom" class="form-control form-control-sm" placeholder="Rechercher par nom...">
-                </div>
-                <div class="col">
-                    <input type="text" name="prenom" class="form-control form-control-sm" placeholder="Rechercher par prénom...">
-                </div>
-                <div class="col">
-                    <input type="text" name="ecoleOrigine" class="form-control form-control-sm" placeholder="Rechercher par école...">
-                </div>
-                <div class="col">
-                    <select name="typeStage" class="form-select form-select-sm">
-                        <option value="">Tous les types</option>
-                        <option value="Stage d'observation">Stage d'observation</option>
-                        <option value="Stage de perfectionnement">Stage de perfectionnement</option>
-                        <option value="Stage école">Stage école</option>
-                        <option value="Stage de fin d'études">Stage de fin d'études</option>
-                        <option value="Stage pré-emploi">Stage pré-emploi</option>
-                        <option value="Autre">Autre</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <select name="serviceDivision" class="form-select form-select-sm">
-                        <option value="">Tous les services</option>
-                        <option value="Direction Informatique">Direction Informatique</option>
-                        <option value="Direction des Ressources Humaines">Direction des Ressources Humaines</option>
-                        <option value="Service Clientèle">Service Clientèle</option>
-                        <option value="Audit Interne">Audit Interne</option>
-                        <option value="Direction Financière">Direction Financière</option>
-                        <option value="Direction Commerciale">Direction Commerciale</option>
-                        <option value="Service Juridique">Service Juridique</option>
-                        <option value="Direction des Opérations">Direction des Opérations</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row g-2 mt-1">
-                <div class="col">
-                    <input type="date" name="dateDebut" class="form-control form-control-sm">
-                </div>
-                <div class="col">
-                    <input type="date" name="dateFin" class="form-control form-control-sm">
-                </div>
-                <div class="col">
-                    <button type="submit" class="btn btn-primary btn-sm w-100" style="background-color: #2563EB; border: none;">
-                        <i class="bi bi-search"></i> Rechercher
+            <div class="card border-0 shadow-sm p-3 mb-3">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#recherchePanel" style="background-color: #2563EB; border: none;">
+                        <i class="bi bi-search"></i> Effectuer une recherche
                     </button>
-                </div>
-                <div class="col">
-                    <a href="/" class="btn btn-outline-secondary btn-sm w-100">
+                    <a href="/" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-x-circle"></i> Réinitialiser
                     </a>
                 </div>
+
+                <div class="collapse" id="recherchePanel">
+                    <form method="GET" action="/rechercher">
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-4">
+                                <select id="categorieRecherche" class="form-select form-select-sm" onchange="afficherCategorie()">
+                                    <option value="">-- Choisir la catégorie --</option>
+                                    <option value="perso">Informations personnelles</option>
+                                    <option value="stage">Informations du stage</option>
+                                    <option value="tout">Tous les critères</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="champsPerso" style="display:none;">
+                            <h6 class="text-muted mb-2"><i class="bi bi-person"></i> Informations personnelles</h6>
+                            <div class="row g-2 mb-3">
+                                <div class="col">
+                                    <input type="text" name="nom" class="form-control form-control-sm" placeholder="Nom...">
+                                </div>
+                                <div class="col">
+                                    <input type="text" name="prenom" class="form-control form-control-sm" placeholder="Prénom...">
+                                </div>
+                                <div class="col">
+                                    <select name="sexe" class="form-select form-select-sm">
+                                        <option value="">Sexe...</option>
+                                        <option value="Masculin">Masculin</option>
+                                        <option value="Féminin">Féminin</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <input type="text" name="ecoleOrigine" class="form-control form-control-sm" placeholder="École...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="champsStage" style="display:none;">
+                            <h6 class="text-muted mb-2"><i class="bi bi-briefcase"></i> Informations du stage</h6>
+                            <div class="row g-2 mb-2">
+                                <div class="col">
+                                    <select name="typeStage" class="form-select form-select-sm">
+                                        <option value="">Type de stage...</option>
+                                        <option value="Stage d'observation">Stage d'observation</option>
+                                        <option value="Stage de perfectionnement">Stage de perfectionnement</option>
+                                        <option value="Stage école">Stage école</option>
+                                        <option value="Stage de fin d'études">Stage de fin d'études</option>
+                                        <option value="Stage pré-emploi">Stage pré-emploi</option>
+                                        <option value="Autre">Autre</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <select name="serviceDivision" class="form-select form-select-sm">
+                                        <option value="">Service...</option>
+                                        <option value="Direction Informatique">Direction Informatique</option>
+                                        <option value="Direction des Ressources Humaines">Direction des Ressources Humaines</option>
+                                        <option value="Service Clientèle">Service Clientèle</option>
+                                        <option value="Audit Interne">Audit Interne</option>
+                                        <option value="Direction Financière">Direction Financière</option>
+                                        <option value="Direction Commerciale">Direction Commerciale</option>
+                                        <option value="Service Juridique">Service Juridique</option>
+                                        <option value="Direction des Opérations">Direction des Opérations</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row g-2 mb-2">
+                                <div class="col">
+                                    <input type="text" name="themeStage" class="form-control form-control-sm" placeholder="Thème du stage...">
+                                </div>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col">
+                                    <label class="form-label small text-muted">Début après le</label>
+                                    <input type="date" name="dateDebut" class="form-control form-control-sm">
+                                </div>
+                                <div class="col">
+                                    <label class="form-label small text-muted">Fin avant le</label>
+                                    <input type="date" name="dateFin" class="form-control form-control-sm">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="boutonRecherche" style="display:none;">
+                            <button type="submit" class="btn btn-primary btn-sm" style="background-color: #2563EB; border: none;">
+                                <i class="bi bi-search"></i> Rechercher
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
+
+            <script>
+                function afficherCategorie() {
+                    document.getElementById('champsPerso').style.display = 'none';
+                    document.getElementById('champsStage').style.display = 'none';
+
+                    var choix = document.getElementById('categorieRecherche').value;
+                    var bouton = document.getElementById('boutonRecherche');
+
+                    if (choix === 'perso') {
+                        document.getElementById('champsPerso').style.display = 'block';
+                    } else if (choix === 'stage') {
+                        document.getElementById('champsStage').style.display = 'block';
+                    } else if (choix === 'tout') {
+                        document.getElementById('champsPerso').style.display = 'block';
+                        document.getElementById('champsStage').style.display = 'block';
+                    }
+
+                    bouton.style.display = choix ? 'block' : 'none';
+                }
+            </script>
         </form>
     </div>
 

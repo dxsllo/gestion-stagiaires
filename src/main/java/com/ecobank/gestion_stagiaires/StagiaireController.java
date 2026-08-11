@@ -19,13 +19,13 @@ public class StagiaireController {
     private StagiaireRepository stagiaireRepository;
 
     @GetMapping("/")
-    public String listeStagiaires(Model model,HttpSession session) {
+    public String listeStagiaires(Model model, HttpSession session) {
         if (session.getAttribute("utilisateur") == null) {
             return "redirect:/connexion";
         }
-            List<Stagiaire> stagiaires = stagiaireRepository.findAll();
-            model.addAttribute("stagiaires", stagiaires);
-    return "liste_stagiaires";
+        List<Stagiaire> stagiaires = stagiaireRepository.findAll();
+        model.addAttribute("stagiaires", stagiaires);
+        return "liste_stagiaires";
     }
 
     @GetMapping("/ajouter")
@@ -107,7 +107,7 @@ public class StagiaireController {
     }
 
     @GetMapping("/modifier/{id}")
-    public String afficherModification(@PathVariable Long id, Model model,HttpSession session) {
+    public String afficherModification(@PathVariable Long id, Model model, HttpSession session) {
         if (session.getAttribute("utilisateur") == null) {
             return "redirect:/connexion";
         }
@@ -121,7 +121,7 @@ public class StagiaireController {
     }
 
     @GetMapping("/supprimer/{id}")
-    public String supprimerStagiaire(@PathVariable Long id,HttpSession session) {
+    public String supprimerStagiaire(@PathVariable Long id, HttpSession session) {
         if (session.getAttribute("utilisateur") == null) {
             return "redirect:/connexion";
         }
@@ -157,12 +157,58 @@ public class StagiaireController {
                 nbPresentesChef++;
             }
         }
+        // Compteurs par sexe
+        int nbMasculin = 0;
+        int nbFeminin = 0;
+
+// Compteurs par type de stage
+        int nbObservation = 0;
+        int nbPerfectionnement = 0;
+        int nbFinEtudes = 0;
+        int nbPreEmploi = 0;
+
+        for (Stagiaire s : stagiaires) {
+            // Compter par sexe
+            if ("Masculin".equals(s.getSexe())) nbMasculin++;
+            if ("Féminin".equals(s.getSexe())) nbFeminin++;
+
+            // Compter par type de stage
+            if ("Stage d'observation".equals(s.getTypeStage())) nbObservation++;
+            if ("Stage de perfectionnement".equals(s.getTypeStage())) nbPerfectionnement++;
+            if ("Stage de fin d'études".equals(s.getTypeStage())) nbFinEtudes++;
+            if ("Stage pré-emploi".equals(s.getTypeStage())) nbPreEmploi++;
+        }
+
+        model.addAttribute("nbMasculin", nbMasculin);
+        model.addAttribute("nbFeminin", nbFeminin);
+        model.addAttribute("nbObservation", nbObservation);
+        model.addAttribute("nbPerfectionnement", nbPerfectionnement);
+        model.addAttribute("nbFinEtudes", nbFinEtudes);
+        model.addAttribute("nbPreEmploi", nbPreEmploi);
 
         model.addAttribute("totalStagiaires", totalStagiaires);
         model.addAttribute("nbMemoiresRediges", nbMemoiresRediges);
         model.addAttribute("nbPresentesDRH", nbPresentesDRH);
         model.addAttribute("nbPresentesChef", nbPresentesChef);
         model.addAttribute("stagiaires", stagiaires);
+        
+        // Stats par service
+        java.util.Map<String, Integer> statsParService = new java.util.LinkedHashMap<>();
+        for (Stagiaire s : stagiaires) {
+            if (s.getServiceDivision() != null && !s.getServiceDivision().isEmpty()) {
+                statsParService.merge(s.getServiceDivision(), 1, Integer::sum);
+            }
+        }
+        model.addAttribute("statsParService", statsParService);
+
+// Stats par école
+        java.util.Map<String, Integer> statsParEcole = new java.util.LinkedHashMap<>();
+        for (Stagiaire s : stagiaires) {
+            if (s.getEcoleOrigine() != null && !s.getEcoleOrigine().isEmpty()) {
+                statsParEcole.merge(s.getEcoleOrigine(), 1, Integer::sum);
+            }
+        }
+        model.addAttribute("statsParEcole", statsParEcole);
 
         return "tableau_de_bord";
     }
@@ -210,32 +256,60 @@ public class StagiaireController {
             @RequestParam(required = false) String serviceDivision,
             @RequestParam(required = false) String dateDebut,
             @RequestParam(required = false) String dateFin,
+            @RequestParam(required = false) String sexe,
+            @RequestParam(required = false) String themeStage,
             Model model, HttpSession session) {
 
         if (session.getAttribute("utilisateur") == null) {
             return "redirect:/connexion";
         }
 
-        List<Stagiaire> resultats;
+        List<Stagiaire> resultats = stagiaireRepository.findAll();
 
         if (nom != null && !nom.isEmpty()) {
-            resultats = stagiaireRepository.findByNomContainingIgnoreCase(nom);
-        } else if (prenom != null && !prenom.isEmpty()) {
-            resultats = stagiaireRepository.findByPrenomContainingIgnoreCase(prenom);
-        } else if (ecoleOrigine != null && !ecoleOrigine.isEmpty()) {
-            resultats = stagiaireRepository.findByEcoleOrigineContainingIgnoreCase(ecoleOrigine);
-        } else if (typeStage != null && !typeStage.isEmpty()) {
-            resultats = stagiaireRepository.findByTypeStage(typeStage);
-        } else if (serviceDivision != null && !serviceDivision.isEmpty()) {
-            resultats = stagiaireRepository.findByServiceDivision(serviceDivision);
-        } else if (dateDebut != null && !dateDebut.isEmpty() && dateFin != null && !dateFin.isEmpty()) {
-            resultats = stagiaireRepository.findByDateDebutGreaterThanEqualAndDateFinLessThanEqual(dateDebut, dateFin);
-        } else if (dateDebut != null && !dateDebut.isEmpty()) {
-            resultats = stagiaireRepository.findByDateDebutGreaterThanEqual(dateDebut);
-        } else if (dateFin != null && !dateFin.isEmpty()) {
-            resultats = stagiaireRepository.findByDateFinLessThanEqual(dateFin);
-        } else {
-            resultats = stagiaireRepository.findAll();
+            resultats = resultats.stream()
+                    .filter(s -> s.getNom().toLowerCase().contains(nom.toLowerCase()))
+                    .toList();
+        }
+        if (prenom != null && !prenom.isEmpty()) {
+            resultats = resultats.stream()
+                    .filter(s -> s.getPrenom().toLowerCase().contains(prenom.toLowerCase()))
+                    .toList();
+        }
+        if (sexe != null && !sexe.isEmpty()) {
+            resultats = resultats.stream()
+                    .filter(s -> sexe.equals(s.getSexe()))
+                    .toList();
+        }
+        if (ecoleOrigine != null && !ecoleOrigine.isEmpty()) {
+            resultats = resultats.stream()
+                    .filter(s -> s.getEcoleOrigine().toLowerCase().contains(ecoleOrigine.toLowerCase()))
+                    .toList();
+        }
+        if (typeStage != null && !typeStage.isEmpty()) {
+            resultats = resultats.stream()
+                    .filter(s -> typeStage.equals(s.getTypeStage()))
+                    .toList();
+        }
+        if (serviceDivision != null && !serviceDivision.isEmpty()) {
+            resultats = resultats.stream()
+                    .filter(s -> serviceDivision.equals(s.getServiceDivision()))
+                    .toList();
+        }
+        if (themeStage != null && !themeStage.isEmpty()) {
+            resultats = resultats.stream()
+                    .filter(s -> s.getThemeStage() != null && s.getThemeStage().toLowerCase().contains(themeStage.toLowerCase()))
+                    .toList();
+        }
+        if (dateDebut != null && !dateDebut.isEmpty()) {
+            resultats = resultats.stream()
+                    .filter(s -> s.getDateDebut() != null && s.getDateDebut().compareTo(dateDebut) >= 0)
+                    .toList();
+        }
+        if (dateFin != null && !dateFin.isEmpty()) {
+            resultats = resultats.stream()
+                    .filter(s -> s.getDateFin() != null && s.getDateFin().compareTo(dateFin) <= 0)
+                    .toList();
         }
 
         model.addAttribute("stagiaires", resultats);

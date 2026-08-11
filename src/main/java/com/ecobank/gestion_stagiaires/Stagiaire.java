@@ -22,6 +22,8 @@ import jakarta.persistence.Column;
         private String typeStage;
         private String serviceDivision;
         private String tachesDonnees;
+        private String sexe;
+        private String themeStage;
         private int nbTotalTaches;
         private int nbTachesRealisees;
         private float note;
@@ -154,6 +156,22 @@ import jakarta.persistence.Column;
 
         public void setNote(float note) {
             this.note = note;
+        }
+
+        public String getSexe() {
+            return sexe;
+        }
+
+        public void setSexe(String sexe) {
+            this.sexe = sexe;
+        }
+
+        public String getThemeStage() {
+            return themeStage;
+        }
+
+        public void setThemeStage(String themeStage) {
+            this.themeStage = themeStage;
         }
     }
 
