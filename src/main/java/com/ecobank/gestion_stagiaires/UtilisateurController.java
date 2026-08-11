@@ -100,4 +100,27 @@ public class UtilisateurController {
         session.invalidate();
         return "redirect:/connexion";
     }
+    @GetMapping("/renvoyer-otp")
+    public String renvoyerOtp(HttpSession session) {
+        Long userId = (Long) session.getAttribute("otp_user_id");
+        if (userId == null) {
+            return "redirect:/connexion";
+        }
+
+        Utilisateur utilisateur = UtilisateurRepository.findById(userId).orElse(null);
+        if (utilisateur != null) {
+            String otp = String.format("%06d", new Random().nextInt(999999));
+            utilisateur.setOtp(otp);
+            utilisateur.setOtpExpiration(System.currentTimeMillis() + 5 * 60 * 1000);
+            UtilisateurRepository.save(utilisateur);
+
+            try {
+                emailService.envoyerOtp(utilisateur.getEmail(), otp);
+            } catch (Exception e) {
+                // Ignorer si l'envoi échoue
+            }
+        }
+
+        return "redirect:/verification-otp";
+    }
 }

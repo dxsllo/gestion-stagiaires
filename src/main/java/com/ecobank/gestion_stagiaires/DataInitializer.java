@@ -37,7 +37,7 @@ public class DataInitializer implements CommandLineRunner {
             chef.setIdentifiant("Chief");
             chef.setMotDePasse("chief123");
             chef.setRole("chef_de_service");
-            chef.setEmail("kebegift12.com");
+            chef.setEmail("kebegift12@gmail.com");
             chef.setTelephone("0749980642");
             UtilisateurRepository.save(chef);
         }
